@@ -212,7 +212,7 @@ def get_dealer_details(request, dealer_id):
     )
 
 
-def post_review(data_dict):
+def  post_review_to_backend(data_dict):
     request_url = backend_url + "/insert_review"
     try:
         response = requests.post(request_url, json=data_dict)
@@ -283,7 +283,7 @@ def add_review(request):
         }
 
         # Call microservice to insert review
-        post_review(payload)
+        post_review_to_backend(payload)
 
         messages.success(request, "Review submitted successfully!")
         return redirect("dealer_details", dealer_id=dealer_id)
