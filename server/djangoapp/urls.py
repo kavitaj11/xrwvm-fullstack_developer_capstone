@@ -11,7 +11,6 @@ urlpatterns = [
     path("logout/", views.logout_request, name="logout"),
 
     # Dealership APIs
-      # Dealership listing
     path("dealers/", views.get_dealerships, name="dealers"),
     path(
         "dealers/<str:state>/",
@@ -32,8 +31,8 @@ urlpatterns = [
     ),
     path("add_review/", views.add_review, name="add_review"),
     path(
-        route="get_dealers/", 
-        view=views.get_dealerships, 
+        route="get_dealers/",
+        view=views.get_dealerships,
         name="get_dealers"
     ),
     # Cars API
