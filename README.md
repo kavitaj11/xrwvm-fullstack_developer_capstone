@@ -35,16 +35,16 @@ Data flow example:
 - Run Node/Mongo backend (recommended: docker-compose in `server/database`):
   cd server\database;
   docker-compose up -d
-  # or locally (needs Mongo available and possible connection string tweak):
+  or locally (needs Mongo available and possible connection string tweak):
   npm install
   node app.js
 
 - Run sentiment microservice (local):
   cd server\djangoapp\microservices
   python -m pip install -r requirements.txt
-  # ensure NLTK VADER lexicon is installed:
+  ensure NLTK VADER lexicon is installed:
   python -c "import nltk; nltk.download('vader_lexicon')"
-  # run the app; the Django client expects port 5050 by default — run or map accordingly
+  run the app; the Django client expects port 5050 by default — run or map accordingly
   python app.py
 
 - React frontend (dev):
