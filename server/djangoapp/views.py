@@ -1,5 +1,7 @@
 # Uncomment the required imports before adding the code
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
@@ -21,9 +23,9 @@ from .restapis import get_request, analyze_review_sentiments, post_review
 logger = logging.getLogger(__name__)
 
 # URL of your sentiment / dealership microservice running in IBM Code Engine
-backend_url = "http://127.0.0.1:3030"      # Flask CRUD backend (dealers + reviews)
-sentiment_url = "http://127.0.0.1:5000"    # Sentiment microservice
-
+# Flask CRUD backend (dealers + reviews)
+backend_url = "http://127.0.0.1:3030"
+sentiment_url = "http://127.0.0.1:5000"  # Sentiment microservice
 
 
 # Create your views here.
@@ -31,15 +33,22 @@ sentiment_url = "http://127.0.0.1:5000"    # Sentiment microservice
 
 # ✅ Render Home / Index
 def index(request):
-    return render(request, 'djangoapp/home.html')
+    return render(request, "djangoapp/home.html")
+
 
 # Static Page: ABOUT
+
+
 def about(request):
     return render(request, "djangoapp/about.html")
 
+
 # Static Page: CONTACT
+
+
 def contact(request):
     return render(request, "djangoapp/contact.html")
+
 
 def dealers(request):
     # Get selected state from GET query param (default: All)
@@ -61,9 +70,8 @@ def dealers(request):
             "dealerships": dealerships,
             "states": states,
             "selected_state": state,
-        }
+        },
     )
-
 
 
 # ✅ Registration View
@@ -87,10 +95,10 @@ def registration(request):
             username=username,
             password=password,
             first_name=first_name,
-            last_name=last_name
+            last_name=last_name,
         )
         login(request, user)
-        return redirect("home")   # redirect to home page after registration
+        return redirect("home")  # redirect to home page after registration
 
 
 # ✅ Login View
@@ -103,10 +111,10 @@ def login_user(request):
 
         if user is not None:
             login(request, user)
-            return redirect("home")        # ✅ Auto redirect to home
+            return redirect("home")  # ✅ Auto redirect to home
         else:
             messages.error(request, "Invalid username or password")
-            return redirect("login")        # Reload login page
+            return redirect("login")  # Reload login page
 
     return render(request, "djangoapp/login.html")
 
@@ -115,23 +123,28 @@ def logout_request(request):
     logout(request)
     return redirect("home")
 
+
 def get_cars(request):
     count = CarMake.objects.filter().count()
     print(count)
-    if(count == 0):
+    if count == 0:
         initiate()
-    car_models = CarModel.objects.select_related('car_make')
+    car_models = CarModel.objects.select_related("car_make")
     cars = []
     for car_model in car_models:
         cars.append({"CarModel": car_model.name, "CarMake": car_model.car_make.name})
-    return JsonResponse({"CarModels":cars})
+    return JsonResponse({"CarModels": cars})
 
-#Update the `get_dealerships` render list of dealerships all by default, particular state if state is passed
+
+# Update the `get_dealerships` render list of dealerships all by default, particular state if state is passed
+
+
 def get_dealerships(request, state="All"):
     if state == "All":
         endpoint = "/fetchDealers"
     else:
-        endpoint = f"/fetchDealers/{state.capitalize()}"  # <-- capitalize fixes kansas → Kansas
+        # <-- capitalize fixes kansas → Kansas
+        endpoint = f"/fetchDealers/{state.capitalize()}"
 
     dealerships = get_request(endpoint)
     return JsonResponse({"status": 200, "dealers": dealerships})
@@ -154,12 +167,10 @@ def get_dealer_reviews(request, dealer_id):
             {
                 "dealer_id": dealer_id,
                 "reviews": reviews,
-            }
+            },
         )
 
     return JsonResponse({"status": 400, "message": "Bad Request"})
-
-    
 
 
 # Create a `get_dealer_details` view to render the dealer details
@@ -179,7 +190,9 @@ def get_dealer_details(request, dealer_id):
     response = get_request(f"/fetchReviews/dealer/{dealer_id}") or {}
 
     # If backend returns {"reviews": [...]}, use that list
-    reviews = response.get("reviews", response) if isinstance(response, dict) else response
+    reviews = (
+        response.get("reviews", response) if isinstance(response, dict) else response
+    )
 
     sanitized_reviews = []
     for review in reviews:
@@ -202,7 +215,6 @@ def get_dealer_details(request, dealer_id):
     )
 
 
-    
 def post_review(data_dict):
     request_url = backend_url + "/insert_review"
     try:
@@ -212,13 +224,10 @@ def post_review(data_dict):
         print("Network exception occurred:", e)
         return {"error": "Could not post review"}
 
+
 # Create a `add_review` view to submit a review
-from django.shortcuts import render, redirect
-from django.contrib import messages
-import requests
 
 
-from django.contrib.auth.decorators import login_required
 @login_required
 def add_review(request):
     if request.method == "GET":
@@ -232,7 +241,9 @@ def add_review(request):
         if not CarMake.objects.exists():
             initiate()
 
-        cars = CarModel.objects.select_related("car_make").order_by("car_make__name", "name")
+        cars = CarModel.objects.select_related("car_make").order_by(
+            "car_make__name", "name"
+        )
 
         # get dealer details for display on page
         dealer = get_request(f"/fetchDealer/{dealer_id}")
@@ -253,7 +264,9 @@ def add_review(request):
         car_id = request.POST.get("car_id")
 
         if not dealer_id or not car_id:
-            messages.error(request, "Please select a dealer and a car before submitting.")
+            messages.error(
+                request, "Please select a dealer and a car before submitting."
+            )
             return redirect("dealers")
 
         # Find selected car
@@ -265,10 +278,11 @@ def add_review(request):
             "dealership": int(dealer_id),
             "review": request.POST.get("review", "").strip(),
             "purchase": request.POST.get("purchasecheck") == "on",
-            "purchase_date": request.POST.get("purchase_date") or datetime.now().strftime("%m/%d/%Y"),
+            "purchase_date": request.POST.get("purchase_date")
+            or datetime.now().strftime("%m/%d/%Y"),
             "car_make": car.car_make.name,
             "car_model": car.name,
-            "car_year": str(car.year),   # ✅ FIXED HERE
+            "car_year": str(car.year),  # ✅ FIXED HERE
         }
 
         # Call microservice to insert review

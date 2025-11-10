@@ -54,7 +54,8 @@ def analyze_review_sentiments(text):
     try:
         response = requests.get(url)
         json_response = response.json()
-        return json_response.get("label", "neutral")   # Expect label: positive/neutral/negative
+        # Expect label: positive/neutral/negative
+        return json_response.get("label", "neutral")
 
     except Exception as e:
         print("❌ Sentiment API error:", e)
