@@ -1,53 +1,61 @@
-# Uncomment the imports below before you add the function code
-# import requests
 import os
+import requests
 from dotenv import load_dotenv
-import requests 
 
 load_dotenv()
 
-backend_url = os.getenv(
-    'backend_url', default="http://localhost:3030")
-sentiment_analyzer_url = os.getenv(
-    'sentiment_analyzer_url',
-    default="http://localhost:5050/")
+# Backend services
+backend_url = os.getenv("backend_url", "http://localhost:3030")
+sentiment_url = os.getenv("sentiment_analyzer_url", "http://127.0.0.1:5000")
 
-def get_request(endpoint, **kwargs):
-    params = ""
-    if(kwargs):
-        for key,value in kwargs.items():
-            params=params+key+"="+value+"&"
 
-    request_url = backend_url+endpoint+"?"+params
+# ----------------------- GET REQUEST (Dealers / Reviews) ----------------------- #
+def get_request(endpoint, **params):
+    """
+    Calls backend microservice on localhost:3030
+    Ex: get_request("/fetchReviews/dealer/10")
+    """
+    url = f"{backend_url.rstrip('/')}/{endpoint.lstrip('/')}"
+    print("➡️ GET:", url, params)
 
-    print("GET from {} ".format(request_url))
     try:
-        # Call get method of requests library with URL and parameters
-        response = requests.get(request_url)
+        response = requests.get(url, params=params)
         return response.json()
-    except:
-        # If any error occurs
-        print("Network exception occurred")
+    except Exception as e:
+        print("❌ Network error:", e)
+        return {"status": "error", "message": str(e)}
 
+
+# ----------------------- POST REVIEW (CRUD microservice) ----------------------- #
+def post_review(review_payload, dealer_id):
+    """
+    Send review to backend database microservice
+    """
+    url = f"{backend_url.rstrip('/')}/postreview/{dealer_id}"
+    print("➡️ POST:", url, review_payload)
+
+    try:
+        response = requests.post(url, json=review_payload)
+        return response.json()
+    except Exception as e:
+        print("❌ Error posting review:", e)
+        return {"status": "error", "message": str(e)}
+
+
+# ----------------------- SENTIMENT ANALYZER (Flask microservice @5000) ----------------------- #
 def analyze_review_sentiments(text):
-    request_url = sentiment_analyzer_url+"analyze/"+text
-    try:
-        # Call get method of requests library with URL and parameters
-        response = requests.get(request_url)
-        return response.json()
-    except Exception as err:
-        print(f"Unexpected {err=}, {type(err)=}")
-        print("Network exception occurred")
+    """
+    Calls sentiment analyzer microservice.
+    GET http://127.0.0.1:5000/analyze/<text>
+    """
+    url = f"{sentiment_url.rstrip('/')}/analyze/{text}"
+    print("➡️ Sentiment Request:", url)
 
-# def analyze_review_sentiments(text):
-# request_url = sentiment_analyzer_url+"analyze/"+text
-# Add code for retrieving sentiments
-
-def post_review(data_dict):
-    request_url = backend_url+"/insert_review"
     try:
-        response = requests.post(request_url,json=data_dict)
-        print(response.json())
-        return response.json()
-    except:
-        print("Network exception occurred")
+        response = requests.get(url)
+        json_response = response.json()
+        return json_response.get("label", "neutral")   # Expect label: positive/neutral/negative
+
+    except Exception as e:
+        print("❌ Sentiment API error:", e)
+        return "neutral"

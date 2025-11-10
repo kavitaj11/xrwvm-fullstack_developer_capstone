@@ -124,3 +124,31 @@ img{
     text-align:center;
     box-shadow: 2px 2px 3px #999;  
 }
+
+.review-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: left;
+    font-size: 1.1rem;
+    position: relative;
+    min-height: 200px;
+    border: 1px solid #e5e5e5;
+}
+
+.sentiment-icon {
+    font-size: 40px;
+    text-align: center;
+}
+
+.review-footer {
+    font-style: italic;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    color: #666;
+}
+
+.review-text {
+    font-size: 1.15rem;
+    margin-top: 8px;
+}

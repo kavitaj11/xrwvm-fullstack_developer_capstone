@@ -21,7 +21,9 @@ from .restapis import get_request, analyze_review_sentiments, post_review
 logger = logging.getLogger(__name__)
 
 # URL of your sentiment / dealership microservice running in IBM Code Engine
-backend_url = "https://sentianalyzer.1we5qox0xr1y.us-south.codeengine.appdomain.cloud"
+backend_url = "http://127.0.0.1:3030"      # Flask CRUD backend (dealers + reviews)
+sentiment_url = "http://127.0.0.1:5000"    # Sentiment microservice
+
 
 
 # Create your views here.
@@ -185,9 +187,9 @@ def get_dealer_details(request, dealer_id):
             continue  # skip None or malformed entries
 
         review_text = review.get("review", "")
-        sentiment_response = analyze_review_sentiments(review_text) or {}
+        sentiment = analyze_review_sentiments(review_text)
+        review["sentiment"] = sentiment or "neutral"
 
-        review["sentiment"] = sentiment_response.get("sentiment", "neutral")
         sanitized_reviews.append(review)
 
     return render(
