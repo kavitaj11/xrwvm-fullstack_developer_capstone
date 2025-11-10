@@ -46,5 +46,5 @@ jobs:
 
     - name: Run Linter
       run: |
-        jshint server/database
-        echo "✅ JS lint completed"
+          cd server/database
+          jshint .
