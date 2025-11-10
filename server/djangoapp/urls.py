@@ -6,26 +6,28 @@ urlpatterns = [
     path("", views.index, name="home"),
     path("dealers/", 
          views.dealers, 
-         name="dealers"),
+         name="dealers"
+    ),
     # Authentication
     path("register/", 
          views.registration, 
          name="register"
-         ),
+    ),
     path("login/", 
          views.login_user, 
          name="login"
-         ),
+    ),
     path("logout/", 
          views.logout_request, 
          name="logout"
-         ),
+    ),
 
       # Dealership endpoints
     path(
         "dealers/", 
         views.get_dealerships, 
-        name="dealers"),
+        name="dealers"
+    ),
     path(
         "dealers/<str:state>/",
         views.get_dealerships,
@@ -46,7 +48,8 @@ urlpatterns = [
          name="add_review"),
     path("get_dealers/", 
          views.get_dealerships, 
-         name="get_dealers"),
+         name="get_dealers"
+    ),
 
     # Cars API
     path("get_cars/", views.get_cars, name="getcars"),
