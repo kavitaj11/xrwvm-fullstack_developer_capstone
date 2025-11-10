@@ -2,7 +2,7 @@
 
 This repo contains a Django web app, a Node/MongoDB backend microservice, a small Flask sentiment microservice, and a React frontend. These instructions give a concise, actionable primer for an AI coding agent to be productive here: what the pieces are, where to change behavior, and the exact commands and files that are important.
 
-## Big-picture architecture (what talks to what)
+## High-Level architecture 
 
 - Django app: `server/djangoapp/` — hosts views/templates and server-side code. Key file: `restapis.py` (client utilities used by views to call backend services).
 - Node/Mongo backend: `server/database/app.js` — Express + Mongoose REST API that serves dealerships and reviews (default port 3030).
