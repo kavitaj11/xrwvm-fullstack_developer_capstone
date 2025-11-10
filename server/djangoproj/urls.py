@@ -36,7 +36,8 @@ urlpatterns = [
     ),
     path("dealers/", TemplateView.as_view(template_name="index.html")),
     path(
-        "postreview/<int:dealer_id>", TemplateView.as_view(template_name="index.html")
+        "postreview/<int:dealer_id>", TemplateView.as_view(
+            template_name="index.html")
     ),
     path("admin/", admin.site.urls),
 ]

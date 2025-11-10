@@ -1,8 +1,6 @@
 # Uncomment the required imports before adding the code
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
@@ -132,7 +130,8 @@ def get_cars(request):
     car_models = CarModel.objects.select_related("car_make")
     cars = []
     for car_model in car_models:
-        cars.append({"CarModel": car_model.name, "CarMake": car_model.car_make.name})
+        cars.append({"CarModel": car_model.name,
+                    "CarMake": car_model.car_make.name})
     return JsonResponse({"CarModels": cars})
 
 
@@ -191,7 +190,8 @@ def get_dealer_details(request, dealer_id):
 
     # If backend returns {"reviews": [...]}, use that list
     reviews = (
-        response.get("reviews", response) if isinstance(response, dict) else response
+        response.get("reviews", response) if isinstance(
+            response, dict) else response
     )
 
     sanitized_reviews = []

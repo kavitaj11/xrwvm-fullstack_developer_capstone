@@ -1,4 +1,26 @@
-## Purpose
+# 🚗 Car Dealership Review Platform  
+Django + Node/MongoDB + Flask Sentiment + React
+
+## ✅ Purpose
+
+This project is a full-stack cloud application allowing users to:
+- Browse car dealerships
+- Read reviews
+- Submit reviews
+- Get AI-based sentiment analysis of each review
+
+Tech stack summary:
+
+| Layer                             | Technology                              |
+|------                             |------------                             |
+| Frontend                          | Django Templates + React SPA (optional) |
+| Backend (data + CRUD)             | Node.js + Express + MongoDB             |
+| Review sentiment analyzer         | Flask + NLTK VADER                      |
+| Authentication / Web server / ORM | Django                                  |
+
+Designed for quick onboarding and AI-coding-assistance.
+
+## Application Repository
 
 This repo contains a Django web app, a Node/MongoDB backend microservice, a small Flask sentiment microservice, and a React frontend. These instructions give a concise, actionable primer for an AI coding agent to be productive here: what the pieces are, where to change behavior, and the exact commands and files that are important.
 
