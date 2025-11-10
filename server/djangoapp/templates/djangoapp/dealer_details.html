@@ -1,0 +1,60 @@
+{% extends "djangoapp/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container my-5">
+
+    <!-- Dealer Header -->
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>{{ dealer.full_name }}</h2>
+        <a href="{% url 'add_review' %}?dealer_id={{ dealer.id }}" class="btn btn-primary">
+            Add Review
+        </a>
+    </div>
+
+    <p class="text-muted">
+        {{ dealer.address }}, {{ dealer.city }}, {{ dealer.state }} {{ dealer.zip }}
+    </p>
+    <hr>
+
+    <!-- Review List -->
+    <h4>Customer Reviews</h4>
+
+    {% if reviews %}
+        <div class="list-group mt-4">
+            {% for review in reviews %}
+            <div class="list-group-item mb-2 border rounded p-3">
+
+                <div class="d-flex justify-content-between">
+                    <strong>{{ review.name }}</strong>
+
+                    {% if review.sentiment == "positive" %}
+                        <span class="badge bg-success">Positive</span>
+                    {% elif review.sentiment == "negative" %}
+                        <span class="badge bg-danger">Negative</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Neutral</span>
+                    {% endif %}
+                </div>
+
+                <p class="mt-2 mb-1">{{ review.review }}</p>
+
+                {% if review.car_model %}
+                <p class="small text-muted">
+                    Car Purchased: {{ review.car_make }} {{ review.car_model }} ({{ review.car_year }})
+                </p>
+                {% endif %}
+
+                {% if review.purchase_date %}
+                <p class="small text-muted">Purchase Date: {{ review.purchase_date }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted mt-3">No reviews yet. Be the first to write one!</p>
+    {% endif %}
+</div>
+
+{% endblock %}

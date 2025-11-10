@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const fs = require('fs');
 const  cors = require('cors')
 const app = express()
-const port = 3030;
+const port = process.env.PORT || 3030;
 
 app.use(cors())
 app.use(require('body-parser').urlencoded({ extended: false }));
@@ -56,19 +56,34 @@ app.get('/fetchReviews/dealer/:id', async (req, res) => {
   }
 });
 
-// Express route to fetch all dealerships
+// ✅ Fetch all dealerships
 app.get('/fetchDealers', async (req, res) => {
-//Write your code here
+  try {
+    const dealers = await Dealerships.find();
+    res.json(dealers);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching dealers' });
+  }
 });
 
-// Express route to fetch Dealers by a particular state
+// ✅ Fetch dealerships by state
 app.get('/fetchDealers/:state', async (req, res) => {
-//Write your code here
+  try {
+    const dealers = await Dealerships.find({ state: req.params.state });
+    res.json(dealers);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching dealers by state' });
+  }
 });
 
-// Express route to fetch dealer by a particular id
+// ✅ Fetch dealership by ID
 app.get('/fetchDealer/:id', async (req, res) => {
-//Write your code here
+  try {
+    const dealer = await Dealerships.findOne({ id: req.params.id });
+    res.json(dealer);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching dealer' });
+  }
 });
 
 //Express route to insert review
@@ -99,6 +114,8 @@ app.post('/insert_review', express.raw({ type: '*/*' }), async (req, res) => {
 });
 
 // Start the Express server
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`✅ Server is running on port ${port}`);
 });
+
+

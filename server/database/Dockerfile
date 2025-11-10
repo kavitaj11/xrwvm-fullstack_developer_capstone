@@ -11,6 +11,6 @@ ADD data/reviews.json .
 COPY . .
 RUN npm install
 
-EXPOSE 3030
+EXPOSE 5000
 
 CMD [ "node", "app.js" ]

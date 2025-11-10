@@ -1,0 +1,53 @@
+{% extends "djangoapp/base.html" %}
+{% block content %}
+
+<div class="container mt-5">
+    <h3 class="mb-4">Add Review for <strong>{{ dealer.dealer.full_name }}</strong></h3>
+
+    <form method="POST" action="{% url 'add_review' %}">
+        {% csrf_token %}
+
+        <!-- Hidden dealer ID -->
+        <input type="hidden" name="dealer_id" value="{{ dealer_id }}">
+
+        <!-- Review Text -->
+        <div class="form-group mb-3">
+            <label>Your Review</label>
+            <textarea name="review" class="form-control" rows="4" placeholder="Write your review here..." required></textarea>
+        </div>
+
+        <!-- Car Dropdown -->
+        <div class="form-group mb-3">
+            <label>Select Car</label>
+            <select name="car_id" class="form-select" required>
+                <option value="" disabled selected>-- Select Car --</option>
+                {% for car in cars %}
+                    <option value="{{ car.id }}">
+                        {{ car.car_make.name }} - {{ car.name }} ({{ car.year|date:"Y" }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Purchased Checkbox -->
+        <div class="form-group form-check mb-3">
+            <input type="checkbox" class="form-check-input" name="purchasecheck" id="purchasecheck">
+            <label for="purchasecheck" class="form-check-label">I purchased a car at this dealership</label>
+        </div>
+
+        <!-- Purchase Date -->
+        <div class="form-group mb-4">
+            <label>Purchase Date</label>
+            <input type="date" name="purchase_date" class="form-control">
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex gap-3">
+            <a href="{% url 'dealer_details' dealer_id %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

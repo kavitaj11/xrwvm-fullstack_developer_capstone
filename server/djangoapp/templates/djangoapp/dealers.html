@@ -1,0 +1,54 @@
+{% extends "djangoapp/base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <h3 class="mb-3">Dealerships</h3>
+
+    <!-- State filter dropdown -->
+    <form method="GET" action="{% url 'dealers_by_state' 'All' %}"
+          onChange="this.action='/dealers/' + this.state.value;">
+        <select class="form-select w-25 mb-3" name="state" id="state">
+            <option value="All">All States</option>
+            {% for s in states %}
+                <option value="{{ s }}" {% if selected_state == s %}selected{% endif %}>
+                    {{ s }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <!-- Dealership Table -->
+    <table class="table table-bordered table-striped text-center">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Dealer Name</th>
+                <th>City</th>
+                <th>Address</th>
+                <th>Zip</th>
+                <th>State</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for dealer in dealerships %}
+            <tr>
+                <td>{{ dealer.id }}</td>
+                <td>
+                    <!-- hyperlink dealer name -->
+                    <a href="{% url 'dealer_details' dealer.id %}">
+                        {{ dealer.full_name }}
+                    </a>
+                </td>
+                <td>{{ dealer.city }}</td>
+                <td>{{ dealer.address }}</td>
+                <td>{{ dealer.zip }}</td>
+                <td>{{ dealer.state }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "djangoapp/base.html" %}
+{% block content %}
+
+{% include "djangoapp/_navbar.html" %}
+
+<div class="container mt-4">
+
+    <h3>Write a Review</h3>
+    <form method="POST" action="{% url 'add_review' %}">
+        {% csrf_token %}
+
+        <input type="hidden" name="dealer_id" value="{{ dealer_id }}">
+
+        <label class="form-label">Your Review</label>
+        <textarea name="review" class="form-control" rows="3" required></textarea>
+
+        <label class="form-label mt-3">Car Purchased?</label>
+        <select class="form-select" name="purchase">
+            <option value="True">Yes</option>
+            <option value="False">No</option>
+        </select>
+
+        <label class="form-label mt-3">Purchase Date</label>
+        <input type="date" class="form-control" name="purchase_date">
+
+        <button class="btn btn-success mt-4" type="submit">Submit Review</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "djangoapp/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="d-flex flex-column align-items-center">
+    <div class="card mt-5" style="width: 50%;">
+        <img src="{% static 'car_dealership.jpg' %}" class="card-img-top">
+
+        <div class="banner text-center p-3">
+            <h5>Welcome to our Dealerships!</h5>
+
+            <a href="{% url 'dealers' %}" class="btn btn-primary mt-2">
+                View Dealerships
+            </a>
+
+            <button onclick="getCars()" class="btn btn-success mt-2">
+                Get Cars
+            </button>
+        </div>
+    </div>
+
+    <div id="car-list" class="mt-4" style="width: 50%;"></div>
+
+</div>
+
+<script>
+async function getCars() {
+    const response = await fetch("{% url 'getcars' %}");
+    const data = await response.json();
+
+    let table = `<table class="table table-bordered mt-3">
+                    <thead>
+                      <tr><th>Car Make</th><th>Car Model</th></tr>
+                    </thead>
+                    <tbody>`;
+
+    data.CarModels.forEach(car => {
+        table += `<tr><td>${car.CarMake}</td><td>${car.CarModel}</td></tr>`;
+    });
+
+    table += `</tbody></table>`;
+
+    document.getElementById("car-list").innerHTML = table;
+}
+</script>
+
+{% endblock %}

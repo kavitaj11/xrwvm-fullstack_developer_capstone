@@ -1,0 +1,24 @@
+{% extends "djangoapp/base.html" %}
+
+{% block content %}
+<div class="card p-4" style="max-width: 350px; margin: auto;">
+    <h4 class="text-center">Login</h4>
+
+    {% if messages %}
+        {% for message in messages %}
+          <p class="text-danger">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        <label>Username</label>
+        <input type="text" name="username" class="form-control mb-2" required>
+
+        <label>Password</label>
+        <input type="password" name="password" class="form-control mb-3" required>
+
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+</div>
+{% endblock %}

@@ -16,11 +16,22 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from django.conf.urls.static import static
 from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
+
+    # ✅ Backend app routes FIRST
+    path('', include('djangoapp.urls')),   
+
+    # ✅ Static frontend template pages
+    path('about/', TemplateView.as_view(template_name="djangoapp/about.html"), name="about"),
+    path('contact/', TemplateView.as_view(template_name="djangoapp/contact.html"), name="contact"),
+    path('dealers/', TemplateView.as_view(template_name="index.html")),
+    path('postreview/<int:dealer_id>',TemplateView.as_view(template_name="index.html")),
     path('admin/', admin.site.urls),
-    path('djangoapp/', include('djangoapp.urls')),
-    path('', TemplateView.as_view(template_name="Home.html")),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
+
+# ✅ Allow static files
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
