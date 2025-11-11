@@ -19,8 +19,11 @@ logger = logging.getLogger(__name__)
 
 # URL of your sentiment / dealership microservice running in IBM Code Engine
 # Flask CRUD backend (dealers + reviews)
-backend_url = "http://127.0.0.1:3030"
-sentiment_url = "http://127.0.0.1:5000"  # Sentiment microservice
+backend_url = "https://dealership-backend.22l0kxzcvcxt.us-south.codeengine.appdomain.cloud"
+sentiment_url = "https://sentiment.22l0kxzcvcxt.us-south.codeengine.appdomain.cloud"
+
+#backend_url = "http://127.0.0.1:3030"
+#sentiment_url = "http://127.0.0.1:5000"  # Sentiment microservice
 
 
 # Create your views here.
