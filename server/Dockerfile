@@ -1,25 +1,31 @@
-    FROM python:3.12.0-slim-bookworm
+FROM python:3.12.0-slim-bookworm
 
-    ENV PYTHONBUFFERED 1
-    ENV PYTHONWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 
-    ENV APP=/app
+ENV APP=/app
+WORKDIR $APP
 
-    # Change the workdir.
-    WORKDIR $APP
+# Install system dependencies for psycopg2, mysqlclient, etc
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    gcc \
+    && apt-get clean
 
-    # Install the requirements
-    COPY requirements.txt $APP
+# Install Python dependencies
+COPY requirements.txt $APP/
+RUN pip install --no-cache-dir -r requirements.txt
 
-    RUN pip3 install -r requirements.txt
+# Copy source code (including templates)
+COPY . $APP/
 
-    # Copy the rest of the files
-    COPY . $APP
+# Permissions
+RUN chmod +x /app/entrypoint.sh
 
-    EXPOSE 8000
+EXPOSE 8000
 
-    RUN chmod +x /app/entrypoint.sh
+ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh"]
 
-    ENTRYPOINT ["/bin/bash","/app/entrypoint.sh"]
-
-    CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "djangoproj.wsgi"]
+# ✅ FIX: reference correct project name (`server`)
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "server.wsgi:application"]

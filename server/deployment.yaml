@@ -19,8 +19,10 @@ spec:
       labels:
         run: dealership
     spec:
+      imagePullSecrets:
+      - name: icr-secret
       containers:
-      - image: private.us.icr.io/cardealershipsapp/ibm-fullstack_developer_capstone:latest
+      - image: us.icr.io/cardealershipsapp/ibm-fullstack_developer_capstone:latest
         imagePullPolicy: Always
         name: dealership
         ports:
