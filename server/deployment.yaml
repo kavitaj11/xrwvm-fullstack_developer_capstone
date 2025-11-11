@@ -20,7 +20,7 @@ spec:
         run: dealership
     spec:
       containers:
-      - image: us.icr.io/cardealershipsapp/dealership:latest
+      - image: private.us.icr.io/cardealershipsapp/ibm-fullstack_developer_capstone:latest
         imagePullPolicy: Always
         name: dealership
         ports:

@@ -1,0 +1,112 @@
+<html>
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <link rel="stylesheet" href="static/style.css">
+  <link rel="stylesheet" href="static/bootstrap.min.css">
+
+<script>
+
+// ✅ LOGOUT FUNCTION
+const logout = async () => {
+  let logout_url = window.location.origin + "/djangoapp/logout";
+  const res = await fetch(logout_url, { method: "GET" });
+  const json = await res.json();
+
+  if (json) {
+    let username = sessionStorage.getItem("username");
+    sessionStorage.removeItem("username");
+    window.location.href = window.location.origin;
+    window.location.reload();
+    alert("Logging out " + username + "...");
+  }
+};
+
+// ✅ CHECK SESSION & UPDATE LOGIN/LOGOUT LINKS
+let checkSession = () => {
+  let curr_user = sessionStorage.getItem("username");
+
+  if (curr_user && curr_user !== "") {
+    document.getElementById("loginlogout").innerHTML =
+      '<span class="homepage_links">' + curr_user + '</span>' +
+      '<a class="homepage_links" onclick="logout()" href="/">Logout</a>';
+  } else {
+    document.getElementById("loginlogout").innerHTML =
+      '<a class="homepage_links" href="/login">Login</a>' +
+      '<a class="homepage_links" href="/registration">Register</a>';
+  }
+};
+
+
+// ✅ GET CARS FUNCTION (Fetches Django endpoint & displays table)
+async function getCars() {
+  const response = await fetch("/djangoapp/get_cars");  
+  const data = await response.json();
+
+  let table = `<table class="table table-bordered table-hover mt-3">
+                <thead>
+                  <tr><th>Car Make</th><th>Car Model</th></tr>
+                </thead>
+                <tbody>`;
+
+  data.CarModels.forEach(car => {
+    table += `<tr><td>${car.CarMake}</td><td>${car.CarModel}</td></tr>`;
+  });
+
+  table += `</tbody></table>`;
+
+  document.getElementById("car-list").innerHTML = table;
+}
+
+</script>
+</head>
+
+<body onload="checkSession()">
+
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color:darkturquoise; height: 1in;">
+  <div class="container-fluid">
+      <h2 style="padding-right: 5%;">Dealerships</h2>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item"><a class="nav-link active" style="font-size: larger;" href="#">Home</a></li>
+              <li class="nav-item"><a class="nav-link" style="font-size: larger;" href="/about">About Us</a></li>
+              <li class="nav-item"><a class="nav-link" style="font-size: larger;" href="/contact">Contact Us</a></li>
+          </ul>
+          <span class="navbar-text">
+              <div class="loginlink" id="loginlogout"></div>
+          </span>
+      </div>
+  </div>
+</nav>
+
+
+<!-- MAIN CONTENT SECTION -->
+<div class="d-flex flex-column align-items-center">
+  <div class="card mt-5" style="width: 50%;">
+      <img src="static/car_dealership.jpg" class="card-img-top">
+
+      <div class="banner text-center p-3">
+          <h5>Welcome to our Dealerships!</h5>
+
+          <a href="/dealers" class="btn btn-primary mt-2">
+              View Dealerships
+          </a>
+
+          <button onclick="getCars()" class="btn btn-success mt-2">
+              Get Cars
+          </button>
+      </div>
+  </div>
+
+  <!-- ✅ Display list of cars here -->
+  <div id="car-list" class="mt-4" style="width: 50%;"></div>
+
+</div>
+
+</body>
+</html>
