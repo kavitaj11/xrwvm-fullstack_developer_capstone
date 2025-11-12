@@ -48,18 +48,50 @@ def contact(request):
     return render(request, "djangoapp/contact.html")
 
 
-def dealers(request):
-    # Get selected state from GET query param (default: All)
-    state = request.GET.get("state", "All")
+import json
+import logging
+logger = logging.getLogger(__name__)
 
-    # Build the API endpoint
+def _as_list_of_dicts(payload):
+    """Coerce backend payload into a list[dict]. Handles str, dict, list."""
+    if payload is None:
+        return []
+    if isinstance(payload, str):
+        try:
+            payload = json.loads(payload)
+        except Exception:
+            logger.warning("Could not JSON-decode dealers payload string")
+            return []
+    if isinstance(payload, dict):
+        # Common wrappers used by various backends
+        for key in ("dealers", "dealerships", "results", "data"):
+            if isinstance(payload.get(key), list):
+                return [x for x in payload[key] if isinstance(x, dict)]
+        # If the dict itself is a single dealer record, wrap it
+        return [payload] if payload.get("id") or payload.get("state") else []
+    if isinstance(payload, list):
+        return [x for x in payload if isinstance(x, dict)]
+    return []
+
+
+def dealers(request):
+    # Selected state; default All
+    raw_state = request.GET.get("state", "All")
+    state = "All" if not raw_state or raw_state == "All" else raw_state.strip().title()
+
+    # Build endpoint (title-casing helps inputs like 'kansas' → 'Kansas')
     endpoint = "/fetchDealers" if state == "All" else f"/fetchDealers/{state}"
 
-    # Fetch data from backend microservice
-    dealerships = get_request(endpoint)
+    # Fetch and normalize payload
+    raw = get_request(endpoint)
+    dealerships = _as_list_of_dicts(raw)
 
-    # Extract unique states from returned data
-    states = sorted(list(set([dealer["state"] for dealer in dealerships])))
+    # Defensive: build states list only from dict items that actually have 'state'
+    states = sorted({d.get("state", "Unknown") for d in dealerships if isinstance(d, dict)})
+
+    # Optional: surface empty results nicely
+    if not dealerships:
+        messages.warning(request, f"No dealers found for state: {state}")
 
     return render(
         request,
