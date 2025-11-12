@@ -1,17 +1,25 @@
-FROM python:3.12-slim-bookworm
+    FROM python:3.12.0-slim-bookworm
 
-WORKDIR /app
+    ENV PYTHONBUFFERED 1
+    ENV PYTHONWRITEBYTECODE 1
 
-# Install only required system libs (Postgres + build tools for psycopg)
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        libpq-dev gcc && \
-    rm -rf /var/lib/apt/lists/*
+    ENV APP=/app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+    # Change the workdir.
+    WORKDIR $APP
 
-COPY . .
+    # Install the requirements
+    COPY requirements.txt $APP
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "server.wsgi:application"]
+    RUN pip3 install -r requirements.txt
 
+    # Copy the rest of the files
+    COPY . $APP
+
+    EXPOSE 8000
+
+    RUN chmod +x /app/entrypoint.sh
+
+    ENTRYPOINT ["/bin/bash","/app/entrypoint.sh"]
+
+    CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "djangoproj.wsgi"]

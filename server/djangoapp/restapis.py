@@ -1,12 +1,26 @@
 import os
 import requests
 from dotenv import load_dotenv
+import requests
+import json
+import logging
+
+# 👇 Add this constant here
+sentiment_url = "https://sentiment.22l0kxzcvcxt.us-south.codeengine.appdomain.cloud"
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
 # Backend services
-backend_url = os.getenv("backend_url", "http://localhost:3030")
-sentiment_url = os.getenv("sentiment_analyzer_url", "http://127.0.0.1:5000")
+backend_url = os.getenv(
+    'backend_url', 
+    default="http://localhost:3030"
+)
+sentiment_analyzer_url = os.getenv(
+    'sentiment_analyzer_url',
+     default="http://localhost:5050/"
+)
 
 
 # ----------------------- GET REQUEST (Dealers / Reviews) ----------------------- #

@@ -23,6 +23,10 @@ urlpatterns = [
         "postreview/<int:dealer_id>", TemplateView.as_view(
             template_name="index.html")
     ),
+    path(
+        'register/', 
+         TemplateView.as_view(template_name="register.html")
+    ),
     path("admin/", admin.site.urls),
 ]
 
